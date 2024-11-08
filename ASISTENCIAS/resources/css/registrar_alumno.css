@@ -1,0 +1,59 @@
+/* Estilos generales del cuerpo */
+body {
+    background-image: url('../fondo.jpeg'); /* Imagen de fondo */
+    background-size: cover; /* Cubre todo el viewport */
+    background-position: center; /* Centra la imagen */
+    font-family: Arial, sans-serif; /* Fuente general */
+    margin: 0; /* Eliminar márgenes por defecto */
+    padding: 0; /* Eliminar relleno por defecto */
+    display: flex; /* Usar flexbox para centrar el contenido */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    height: 100vh; /* Altura del viewport completo */
+}
+
+/* Estilos del formulario */
+form {
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco con opacidad para ver la imagen detrás */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    padding: 20px; /* Espaciado interno del formulario */
+    max-width: 400px; /* Ancho máximo del formulario */
+    width: 100%; /* Ancho completo hasta el máximo definido */
+}
+
+/* Estilo de las etiquetas */
+label {
+    display: block; /* Mostrar etiquetas como bloques */
+    margin-bottom: 8px; /* Espaciado inferior de las etiquetas */
+    font-weight: bold; /* Negrita para las etiquetas */
+}
+
+/* Estilo de los campos de entrada */
+input[type="text"],
+input[type="password"] {
+    width: 100%; /* Ancho completo del campo */
+    padding: 10px; /* Espaciado interno del campo */
+    margin-bottom: 15px; /* Espaciado inferior entre campos */
+    border: 1px solid #ccc; /* Borde gris claro */
+    border-radius: 4px; /* Bordes redondeados en campos de entrada */
+}
+
+/* Estilo de los botones */
+button {
+    background-color: #28a745; /* Color de fondo verde para el botón "Ingresar" */
+    color: white; /* Color del texto en blanco */
+    border: none; /* Sin borde */
+    padding: 10px 15px; /* Espaciado interno del botón */
+    border-radius: 4px; /* Bordes redondeados en botones */
+    cursor: pointer; /* Cambiar cursor al pasar sobre el botón */
+    font-size: 16px; /* Tamaño de fuente del botón */
+}
+
+button[type="button"] {
+    background-color: #007bff; /* Color de fondo azul para el botón "Registrarse" */
+}
+
+button:hover {
+    opacity: 0.9; /* Efecto de opacidad al pasar el mouse sobre el botón */
+}

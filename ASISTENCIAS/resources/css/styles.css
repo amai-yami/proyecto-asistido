@@ -1,0 +1,37 @@
+.hidden {
+    display: none;
+}
+
+.login-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+input {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5em;
+    width: calc(100% - 1.2em);
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}

@@ -1,0 +1,164 @@
+/* Estilo general del cuerpo */
+body {
+    background-image: url('../fondo.jpeg');
+    background-size: cover; /* Cubre todo el viewport */
+    background-position: center; /* Centra la imagen */
+    font-family: Arial, sans-serif; /* Fuente general */
+    margin: 0; /* Eliminar márgenes por defecto */
+    padding: 0; /* Eliminar relleno por defecto */
+    background-color: #f4f4f4; /* Color de fondo */
+}
+
+/* Estilo del encabezado */
+header {
+    background-color: #333; /* Color de fondo del header */
+    color: white; /* Color del texto */
+    padding: 10px 0; /* Espaciado superior e inferior */
+}
+
+/* Estilo de la navegación */
+nav ul {
+    list-style-type: none; /* Eliminar viñetas */
+    padding: 0; /* Eliminar relleno */
+    text-align: center; /* Centrar texto */
+}
+
+nav ul li {
+    display: inline; /* Mostrar elementos en línea */
+    margin: 0 15px; /* Espaciado entre elementos */
+}
+
+nav ul li a {
+    color: rgb(255, 255, 255); /* Color del texto del enlace */
+    text-decoration: none; /* Sin subrayado en enlaces */
+}
+
+/* Efecto al pasar el mouse sobre los enlaces */
+nav ul li a:hover {
+    text-decoration: underline; /* Subrayar al pasar el mouse */
+}
+
+/* Estilo del pie de página */
+footer {
+    text-align: center; /* Centrar texto del footer */
+    padding: 20px 0; /* Espaciado superior e inferior */
+    background-color: #333; /* Color de fondo del footer */
+    color: white; /* Color del texto */
+}
+
+label {
+    display: block; /* Asegura que la etiqueta esté en una nueva línea */
+    margin-top: 20px; /* Espacio entre la etiqueta y el campo */
+}
+
+/* Estilos para los paneles */
+.panel {
+    background-image: url('../fondo.jpeg'); /* Ruta a tu imagen */
+    background-size: cover; /* Cubre todo el panel */
+    background-position: center; /* Centra la imagen */
+    display: none; /* Ocultar el panel por defecto */
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 8px; /* Bordes redondeados */
+    color: white; /* Color del texto */
+    position: relative; /* Posicionamiento relativo para el pseudo-elemento */
+}
+
+.panel::before {
+    content: ""; /* Pseudo-elemento para el overlay */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo negro semitransparente */
+    border-radius: 8px; /* Bordes redondeados para el overlay */
+    z-index: 1; /* Asegurarse de que esté por debajo del contenido */
+}
+
+.panel h2,
+.panel label,
+.panel input,
+.panel button {
+    position: relative; /* Para asegurarnos de que estos elementos se muestren sobre el overlay */
+    z-index: 2; /* Asegurarse de que estén por encima del overlay */
+}
+
+/* Estilos para centrar la imagen en el main */
+main {
+    text-align: center; /* Centrar contenido dentro del main */
+}
+
+/* Contenedor para la imagen con texto superpuesto*/
+.image-container {
+    position: relative; /* Posicionamiento relativo para el contenedor de la imagen*/
+}
+
+.image-container img {
+    width: 100%; /* Ancho completo para la imagen*/
+    height: auto; /* Mantener proporción de la imagen*/
+}
+
+/* Estilo para el texto superpuesto sobre la imagen*/
+.text-overlay {
+    position: absolute; /* Posicionamiento absoluto para el texto superpuesto*/
+    top: 20px; /* Distancia desde la parte superior*/
+    left: 20px; /* Distancia desde la izquierda*/
+    background-color: rgba(255, 255, 255, 0.7); /* Fondo blanco con opacidad*/
+    color: #333; /* Color del texto*/
+    padding: 10px; /* Espaciado interno*/
+    border-radius: 5px; /* Bordes redondeados*/
+    font-size: 18px; /* Tamaño de fuente*/
+}
+
+/* Estilos tablas de notas */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Para que las celdas no tengan bordes dobles */
+}
+
+
+
+/* Contenedor de materias (con fondo, bordes y padding) */
+.materias-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los botones se ajusten a la línea */
+    gap: 10px; /* Espaciado entre cada toggle */
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
+}
+
+/* Toggle de materia */
+.materia-toggle {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.materia-toggle input[type="checkbox"] {
+    display: none; /* Ocultar checkbox */
+}
+
+.materia-toggle span {
+    margin-left: 8px;
+}
+
+.materia-toggle:hover {
+    background-color: #555; /* Color al pasar el mouse */
+}
+
+/* Estilo cuando está seleccionado */
+.materia-toggle input[type="checkbox"]:checked + span {
+    font-weight: bold;
+    color: #ffd700; /* Color dorado para indicar selección */
+}
+
+
+
+

@@ -1,0 +1,40 @@
+body {
+    background-image: url('../fondo.jpeg'); /* Cambia la ruta si es necesario */
+    background-size: cover; /* Cubre todo el viewport */
+    background-position: center; /* Centra la imagen */
+    font-family: Arial, sans-serif; /* Fuente general */
+    margin: 0; /* Eliminar márgenes por defecto */
+    padding: 0; /* Eliminar relleno por defecto */
+    background-color: #000000; /* Color de fondo */
+}
+
+header {
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para el nav */
+    padding: 10px 20px; /* Espaciado alrededor del nav */
+}
+
+nav ul {
+    list-style-type: none; /* Eliminar viñetas */
+    padding: 0; /* Eliminar relleno por defecto */
+}
+
+nav ul li {
+    display: inline; /* Mostrar los elementos en línea */
+    margin-right: 15px; /* Espaciado entre elementos */
+}
+
+nav ul li a {
+    text-decoration: none; /* Sin subrayado en enlaces */
+    color: #333; /* Color del texto */
+}
+
+nav ul li a:hover {
+    color: #007BFF; /* Color al pasar el mouse sobre los enlaces */
+}
+/* Estilo del pie de página */
+footer {
+    text-align: center; /* Centrar texto del footer */
+    padding: 20px 0; /* Espaciado superior e inferior */
+    background-color: #333; /* Color de fondo del footer */
+    color: white; /* Color del texto */
+}
