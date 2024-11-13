@@ -1,52 +1,88 @@
 <?php
 // Incluir la clase de conexión
 include('conexion.php');
-//require 'Funciones.php';
-// Inicializar la clase Database y obtener la conexión
+
+class AsistenciaHandler {
+
+    private $db;
+
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    public function obtenerEdad($fechaNacimiento) {
+        $hoy = new DateTime();
+        $nacimiento = new DateTime($fechaNacimiento);
+        $edad = $hoy->diff($nacimiento);
+        return $edad->y; // Devuelve solo los años (edad)
+    }
+
+    public function obtenerCumpleanieros($db) {
+        $stmt = $db->prepare("SELECT nombre, apellido, fecha_nacimiento FROM alumno");
+        $stmt->execute();
+        $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $cumpleanieros = [];
+        $hoy = new DateTime();
+        $mesActual = $hoy->format('m');
+        $diaActual = $hoy->format('d');
+
+        foreach ($alumnos as $alumno) {
+            $fechaNacimiento = new DateTime($alumno['fecha_nacimiento']);
+            $mesNacimiento = $fechaNacimiento->format('m');
+            $diaNacimiento = $fechaNacimiento->format('d');
+
+            if ($mesNacimiento === $mesActual && $diaNacimiento === $diaActual) {
+                $edad = $this->obtenerEdad($alumno['fecha_nacimiento']);
+                $cumpleanieros[] = $alumno['nombre'] . ' ' . $alumno['apellido'] . ' (' . $edad . ' años)';
+            }
+        }
+
+        return $cumpleanieros;
+    }
+
+    public function guardarAsistencias($asistencias) {
+        $sql = "INSERT INTO asistencia (id_alumno, asistencia, fecha) VALUES (:alumnoId, :asistencia, NOW())";
+        $stmt = $this->db->prepare($sql);
+        $exito = true;
+
+        foreach ($asistencias as $asistencia) {
+            $alumnoId = $asistencia['alumnoId'];
+            $asistenciaValor = isset($asistencia['asistencia']) && $asistencia['asistencia'] ? 1 : 0;
+
+            if ($alumnoId !== null) {
+                $stmt->bindParam(':alumnoId', $alumnoId);
+                $stmt->bindParam(':asistencia', $asistenciaValor);
+
+                if (!$stmt->execute()) {
+                    $exito = false;
+                    break;
+                }
+            }
+        }
+
+        return $exito;
+    }
+}
+
+// Iniciar la conexión a la base de datos y la clase de manejo de asistencia
 $database = new Database();
-$pdo = $database->connect();  // Obtener la conexión a la base de datos
+$db = $database->connect();
+$asistenciaHandler = new AsistenciaHandler($db);
 
-header('Content-Type: application/json'); // Asegurar que la respuesta sea JSON
-
-// Verificar que se reciban los datos correctamente
+header('Content-Type: application/json');
 $asistencias = json_decode(file_get_contents('php://input'), true);
 
 if (!$asistencias) {
-    // Devuelve un mensaje de error si no hay datos válidos
     echo json_encode(['success' => false, 'message' => 'No se enviaron datos válidos']);
     exit;
 }
 
-// Iniciar un flag para verificar si hubo un error en el proceso
-$exito = true;
+$exito = $asistenciaHandler->guardarAsistencias($asistencias);
 
-// Preparar la consulta para insertar la asistencia
-$sql = "INSERT INTO asistencia (id_alumno, asistencia, fecha) VALUES (:alumnoId, :asistencia, NOW())";
-$stmt = $pdo->prepare($sql);
-
-// Comenzamos el ciclo para procesar cada asistencia
-foreach ($asistencias as $asistencia) {
-    $alumnoId = $asistencia['alumnoId'];
-    $asistenciaValor = isset($asistencia['asistencia']) ? ($asistencia['asistencia'] ? 1 : 0) : 0; // Si no está presente, se marca como 0
-
-    // Solo procesamos la asistencia si el alumno tiene una marca de asistencia
-    if ($alumnoId !== null) {
-        // Bind de parámetros para cada iteración
-        $stmt->bindParam(':alumnoId', $alumnoId);
-        $stmt->bindParam(':asistencia', $asistenciaValor);
-        
-        // Ejecutar la consulta para cada asistencia
-        if (!$stmt->execute()) {
-            $exito = false; // Si falla, marcar como error
-            break; // Salir del ciclo si ocurre un error
-        }
-    }
-}
-
-
-// Respuesta final dependiendo del resultado
 if ($exito) {
-    echo json_encode(['success' => true]);
+    $cumpleanieros = $asistenciaHandler->obtenerCumpleanieros($db);
+    echo json_encode(['success' => true, 'cumpleanios' => $cumpleanieros]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Hubo un error al registrar las asistencias']);
 }

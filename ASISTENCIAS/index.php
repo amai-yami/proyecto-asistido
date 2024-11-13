@@ -175,7 +175,8 @@
     <button id="cargarAlumnosBtn" onclick="cargarAlumnos()">Listar Alumnos</button>
        <!-- Nuevo botón "Ver Asistencias" -->
        <button onclick="verAsistencias()">Ver Asistencias</button>
-       
+        <!-- Nuevo botón "MODIFICAR ASISTENCIAS" -->
+       <button onclick="modificarAsistenciasFormulario()">Modificar</button>
     <label for="searchAsistencia">Buscar Alumno:</label><br>
     <input type="text" id="searchAsistencia" name="searchAsistencia" required>
     <button onclick="buscarAlumnoAsistencia()">Buscar</button><br><br>
@@ -194,6 +195,8 @@
         </tbody>
     </table>
     <br><button onclick="guardarAsistencias()">Guardar Asistencias</button>
+    <br><br>
+    
  
 </div>
 
@@ -253,7 +256,7 @@
         <p><strong>Asistido</strong>. <br><br> © 2024 Todos los derechos reservados.</p>
     </footer>
 
-    <link rel="stylesheet" href="/resources/css/styles.css?v=1.0">
+
     <link rel="stylesheet" href="/resources/css/index.css?v=1.0">
 
 <!-- Scripts necesarios con defer para cargar después de que el HTML se haya procesado -->

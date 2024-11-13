@@ -62,30 +62,6 @@ function guardarNotas() {
 
 
 
-// Función para mostrar mensajes de error o éxito
-function mostrarMensaje(mensaje, tipo) {
-    // Obtén el contenedor del mensaje dentro del panel de notas
-    const mensajeContainer = document.getElementById('mensajeContainer');
-    
-    mensajeContainer.textContent = mensaje;
-
-    // Aplicar estilo según el tipo de mensaje
-    if (tipo === 'error') {
-        mensajeContainer.style.backgroundColor = 'red';
-        mensajeContainer.style.color = 'white';
-    } else if (tipo === 'success') {
-        mensajeContainer.style.backgroundColor = 'green';
-        mensajeContainer.style.color = 'white';
-    }
-
-    // Mostrar el mensaje
-    mensajeContainer.style.display = 'block';
-
-    // Ocultar el mensaje después de un tiempo
-    setTimeout(() => {
-        mensajeContainer.style.display = 'none';
-    }, 5000);
-}
 
 
 // Función para cargar los alumnos en la tabla
@@ -193,4 +169,30 @@ function verNotas() {
         .catch(error => {
             mostrarMensaje('Error al cargar las notas: ' + error.message, 'error');
         });
+}
+
+
+// Función para mostrar mensajes de error o éxito
+function mostrarMensaje(mensaje, tipo) {
+    // Obtén el contenedor del mensaje dentro del panel de notas
+    const mensajeContainer = document.getElementById('mensajeContainer');
+    
+    mensajeContainer.textContent = mensaje;
+
+    // Aplicar estilo según el tipo de mensaje
+    if (tipo === 'error') {
+        mensajeContainer.style.backgroundColor = 'red';
+        mensajeContainer.style.color = 'white';
+    } else if (tipo === 'success') {
+        mensajeContainer.style.backgroundColor = 'green';
+        mensajeContainer.style.color = 'white';
+    }
+
+    // Mostrar el mensaje
+    mensajeContainer.style.display = 'block';
+
+    // Ocultar el mensaje después de un tiempo
+    setTimeout(() => {
+        mensajeContainer.style.display = 'none';
+    }, 5000);
 }
