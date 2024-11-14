@@ -80,6 +80,25 @@ function cargarAlumnos() {
 function guardarAsistencias() {
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
     const asistencias = [];
+    let fecha = document.getElementById('fecha').value; // Obtener el valor del input de fecha
+
+    // Verificar si se ha seleccionado una fecha
+    if (!fecha) {
+        alert('Por favor, selecciona una fecha.');
+        return;
+    }
+
+    // Asegurarse de que la fecha incluya los segundos
+    if (fecha.length === 16) { // Si la fecha tiene formato "YYYY-MM-DDTHH:MM" (sin segundos)
+        fecha += ":00"; // Agregar los segundos como "00"
+    }
+
+    // Asegurarse de que la fecha esté en el formato adecuado (YYYY-MM-DD HH:MM:SS)
+    // Si la fecha contiene el carácter 'T' (lo que implica un formato de tipo ISO)
+    // Reemplazamos 'T' por un espacio para cumplir con el formato 'YYYY-MM-DD HH:MM'
+    if (fecha.includes('T')) {
+        fecha = fecha.replace('T', ' '); // Reemplazamos 'T' por un espacio
+    }
 
     // Verificar si se han seleccionado alumnos
     if (checkboxes.length === 0) {
@@ -92,7 +111,8 @@ function guardarAsistencias() {
         const alumnoId = checkbox.name.split('_')[1]; // Obtener el ID del alumno del nombre del checkbox
         asistencias.push({
             alumnoId: alumnoId,
-            asistencia: checkbox.value === 'presente' // Marcar como 'presente' si el valor del checkbox es 'presente'
+            asistencia: checkbox.value === 'presente', // Marcar como 'presente' si el valor del checkbox es 'presente'
+            fecha: fecha // Incluir la fecha seleccionada con segundos
         });
     });
 
@@ -135,6 +155,9 @@ function guardarAsistencias() {
         alert('Error al guardar las asistencias. Verifica los detalles en la consola para más información.');
     });
 }
+
+
+
 
 
 function verAsistencias() {

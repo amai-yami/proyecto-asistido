@@ -173,13 +173,19 @@
 <div id="asistenciasPanel" class="panel">
     <h2>Asistencias</h2>
     <button id="cargarAlumnosBtn" onclick="cargarAlumnos()">Listar Alumnos</button>
-       <!-- Nuevo botón "Ver Asistencias" -->
-       <button onclick="verAsistencias()">Ver Asistencias</button>
-        <!-- Nuevo botón "MODIFICAR ASISTENCIAS" -->
-       <button onclick="modificarAsistenciasFormulario()">Modificar</button>
+    <!-- Nuevo botón "Ver Asistencias" -->
+    <button onclick="verAsistencias()">Ver Asistencias</button>
+    <!-- Nuevo botón "MODIFICAR ASISTENCIAS" -->
+    <button onclick="modificarAsistenciasFormulario()">Modificar</button>
+
+    <!-- Input de fecha para registrar asistencias -->
+    <label for="fecha">Fecha:</label>
+    <input type="datetime-local" id="fecha" name="fecha">
+    
     <label for="searchAsistencia">Buscar Alumno:</label><br>
     <input type="text" id="searchAsistencia" name="searchAsistencia" required>
     <button onclick="buscarAlumnoAsistencia()">Buscar</button><br><br>
+
     <table>
         <thead>
             <tr>
@@ -188,7 +194,6 @@
             </tr>
             <!-- Div para mostrar los mensajes al usuario -->
             <div id="mensajeUsuario" class="mensaje-usuario" style="display: none;"></div>
-
         </thead>
         <tbody id="asistenciasBody">
             <!-- Las filas de asistencia se agregarán aquí dinámicamente -->
@@ -196,8 +201,6 @@
     </table>
     <br><button onclick="guardarAsistencias()">Guardar Asistencias</button>
     <br><br>
-    
- 
 </div>
 
 

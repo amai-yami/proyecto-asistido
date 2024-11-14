@@ -23,8 +23,10 @@ try {
     $stmt = $pdo->prepare("DELETE FROM alumno");
     $stmt->execute();
 
-    // Reiniciar AUTO_INCREMENT de la tabla alumno
-    $pdo->prepare("ALTER TABLE alumno AUTO_INCREMENT = 1")->execute();
+   // Reiniciar AUTO_INCREMENT de las tablas: alumno, asistencia y alumno_nota
+$pdo->prepare("ALTER TABLE alumno AUTO_INCREMENT = 1")->execute();
+$pdo->prepare("ALTER TABLE asistencia AUTO_INCREMENT = 1")->execute();
+$pdo->prepare("ALTER TABLE nota AUTO_INCREMENT = 1")->execute();
 
     // Verificar si se eliminaron registros
     if ($stmt->rowCount() > 0) {

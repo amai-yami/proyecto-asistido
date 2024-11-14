@@ -35,9 +35,6 @@ if (isset($data->matricula)) {
             $stmt->bindParam(':matricula', $data->matricula, PDO::PARAM_STR);
             $stmt->execute();
 
-            // Reiniciar AUTO_INCREMENT de la tabla alumno
-            $pdo->prepare("ALTER TABLE alumno AUTO_INCREMENT = 1")->execute();
-
             echo json_encode(["success" => "Alumno, sus notas y asistencias eliminados correctamente"]);
         } else {
             echo json_encode(["error" => "No se encontró el alumno con esa matrícula"]);
