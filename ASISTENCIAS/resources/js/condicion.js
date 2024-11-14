@@ -1,73 +1,103 @@
-async function condicionalumnos(ids_alumnos) {
+async function condicionalumnos() {
     try {
-        // Asegúrate de que ids_alumnos sea un array y contenga datos
-        if (!Array.isArray(ids_alumnos) || ids_alumnos.length === 0) {
-            throw new Error("El array de IDs de alumnos no es válido o está vacío.");
-        }
+        // Capturar los valores de los inputs
+        const diasClase = document.getElementById('diasClase').value;
+        const porcentajeAsistenciaPromocion = document.getElementById('porcentajeAsistenciaPromocion').value;
+        const porcentajeNotaPromocion = document.getElementById('porcentajeNotaPromocion').value;
+        const porcentajeAsistenciaRegular = document.getElementById('porcentajeAsistenciaRegular').value;
+        const porcentajeNotaRegular = document.getElementById('porcentajeNotaRegular').value;
 
-        console.log("IDs de alumnos: ", ids_alumnos); // Verifica que los datos sean correctos
-
-        // Convertir el array de IDs a un string que se pueda enviar en la URL
-        const idsParam = ids_alumnos.join(',');
-
-        const response = await fetch(`../bd/condiciones.php?id_alumnos=${idsParam}`);
-
-        if (!response.ok) {
-            throw new Error(`Error en la respuesta del servidor: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        // Verificar si la respuesta contiene un mensaje de error
-        if (data.mensaje) {
-            alert(data.mensaje);
+        // Validar que todos los campos estén completos
+        if (!diasClase || !porcentajeAsistenciaPromocion || !porcentajeNotaPromocion || !porcentajeAsistenciaRegular || !porcentajeNotaRegular) {
+            mostrarError('Por favor, complete todos los campos.');
             return;
         }
 
-        // Asegurarse de que data sea un array, incluso si es un solo alumno
-        if (!Array.isArray(data)) {
-            data = [data]; // Convertirlo en un array si es necesario
-        }
+        const datosFormulario = {
+            diasClase: diasClase,
+            promocion: {
+                porcentajeAsistencia: porcentajeAsistenciaPromocion,
+                porcentajeNota: porcentajeNotaPromocion
+            },
+            regularizacion: {
+                porcentajeAsistencia: porcentajeAsistenciaRegular,
+                porcentajeNota: porcentajeNotaRegular
+            }
+        };
 
-        // Mostrar la condición del alumno(s) en el formulario
-        mostrarFormulario(data);
+        const response = await fetch('../bd/condiciones.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datosFormulario)
+        });
 
+        // Comprobar si la respuesta del servidor es exitosa
+        if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+        const condicion = await response.json();
+        mostrarCondicion(condicion);
     } catch (error) {
         console.error('Error en la solicitud o el procesamiento:', error);
-
-        let errors = JSON.parse(localStorage.getItem('errorLog')) || [];
-        errors.push({
-            timestamp: new Date().toISOString(),
-            error: error.message
-        });
-        localStorage.setItem('errorLog', JSON.stringify(errors));
-
-        alert('Ocurrió un error al consultar las condiciones. Por favor, intente más tarde.');
+        mostrarError('Ocurrió un error al consultar las condiciones. Por favor, intente más tarde.');
     }
 }
 
+function mostrarCondicion(condicion) {
+    const notasBody = document.getElementById('notasBody');
+    notasBody.innerHTML = `
+        <h3 style="text-align: left;">Condición de los Alumnos:</h3>
+        <div>
+            ${condicion.map(alumno => `
+                <div style="display: flex; align-items: center; margin-bottom: 10px; gap: 15px;">
+                    <h4 style="margin-bottom: 0;">${alumno.alumno} - ${alumno.condicion}</h4>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
 
+function mostrarError(mensaje) {
+    const mensajeContainer = document.getElementById('mensajeContainer');
+    mensajeContainer.innerHTML = `
+        <h3>Error:</h3>
+        <p style="color: red;">${mensaje}</p>
+    `;
+    mensajeContainer.style.display = 'block';
+}
 
-function mostrarFormulario(data) {
-    const formContainer = document.getElementById('form-container');
+function mostrarFormulario() {
+    const formContainer = document.getElementById('notasBody');
     
-    // Limpiar el contenedor antes de mostrar los datos
+    // Limpiar el contenedor antes de mostrar el formulario
     formContainer.innerHTML = '';
 
-    data.forEach(alumno => {
-        formContainer.innerHTML += `
-            <h3>Condición de: ${alumno.nombre} ${alumno.apellido}</h3>
-            <p>Condición: ${alumno.condicion}</p>
-            <p>Asistencias: ${alumno.asistencias}</p>
-            <form>
-                <label for="nombre">Nombre del Alumno:</label>
-                <input type="text" id="nombre" value="${alumno.nombre}" disabled><br><br>
+    formContainer.innerHTML = `
+        <h3>Condición del Alumno</h3>
+        <form>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <label for="diasClase">Días de Clase:</label>
+                <input type="number" id="diasClase" name="diasClase" placeholder="Días de Clase" required>
 
-                <label for="condicion">Condición:</label>
-                <input type="text" id="condicion" value="${alumno.condicion}" disabled><br><br>
+                <h4>Promoción</h4>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label for="porcentajeAsistenciaPromocion">Porcentaje de Asistencia:</label>
+                    <input type="number" id="porcentajeAsistenciaPromocion" name="porcentajeAsistenciaPromocion" placeholder="% Asistencia Promoción" required>
 
-                <button type="submit">Enviar</button>
-            </form>
-        `;
-    });
+                    <label for="porcentajeNotaPromocion">Nota Mínima:</label>
+                    <input type="number" id="porcentajeNotaPromocion" name="porcentajeNotaPromocion" placeholder="% Nota Promoción" required>
+                </div>
+
+                <h4>Regularización</h4>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label for="porcentajeAsistenciaRegular">Porcentaje de Asistencia:</label>
+                    <input type="number" id="porcentajeAsistenciaRegular" name="porcentajeAsistenciaRegular" placeholder="% Asistencia Regularización" required>
+
+                    <label for="porcentajeNotaRegular">Nota Mínima:</label>
+                    <input type="number" id="porcentajeNotaRegular" name="porcentajeNotaRegular" placeholder="% Nota Regularización" required>
+                </div>
+            </div>
+            <br>
+            <button type="button" onclick="condicionalumnos()">Verificar Información</button>
+        </form>
+    `;
 }

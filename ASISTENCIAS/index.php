@@ -219,12 +219,7 @@
     <div class="action-buttons">
         <button id="cargarAlumnosBtn" onclick="cargarAlumnosNotas()">Listar Alumnos</button>
         <button id="cargarNotasBtn" onclick="verNotas()">Listar Notas</button>
-        <button onclick="condicionalumnos()">Ver Condición</button>
-    </div>
-
-    <!-- Formulario para Mostrar Condición del Alumno -->
-    <div id="form-container">
-        <!-- Aquí se mostrará el nombre y condición del alumno -->
+        <button onclick="mostrarFormulario()">Ver Condición</button>
     </div>
 
     <!-- Tabla de Notas -->
@@ -237,6 +232,7 @@
                 <th>Final</th>
             </tr>
         </thead>
+        
         <tbody id="notasBody">
             <!-- Las filas de notas se agregarán aquí dinámicamente -->
         </tbody>

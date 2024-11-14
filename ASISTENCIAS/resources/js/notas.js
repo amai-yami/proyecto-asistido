@@ -196,3 +196,9 @@ function mostrarMensaje(mensaje, tipo) {
         mensajeContainer.style.display = 'none';
     }, 5000);
 }
+
+
+
+
+
+
