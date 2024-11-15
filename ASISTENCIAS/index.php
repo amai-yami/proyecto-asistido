@@ -156,7 +156,7 @@
 
 
 
-        <!-- Panel para registrar nuevo alumno -->
+<!-- Panel para registrar, eliminar y modificar alumnos -->
 <div id="registroPanel" class="panel">
     <h2>Registro de Alumnos</h2>
     <button type="button" onclick="mostrarRegistro()">Registrar Alumno</button>
@@ -164,9 +164,7 @@
     <button type="button" onclick="mostrarModificar()">Modificar Alumno</button>
     <button type="button" onclick="eliminarCurso()">Eliminar Curso</button>
     <div id="formContainer"></div> <!-- Contenedor donde se generarán los inputs -->
-    
-    <br>
- 
+    <div id="mensajePanel" style="margin-top: 10px;"></div> <!-- Div para mostrar mensajes generales -->
 </div>
 
 <!-- Panel para Asistencias -->
@@ -178,10 +176,7 @@
     <!-- Nuevo botón "MODIFICAR ASISTENCIAS" -->
     <button onclick="modificarAsistenciasFormulario()">Modificar</button>
 
-    <!-- Input de fecha para registrar asistencias -->
-    <label for="fecha">Fecha:</label>
-    <input type="datetime-local" id="fecha" name="fecha">
-    
+  
     <label for="searchAsistencia">Buscar Alumno:</label><br>
     <input type="text" id="searchAsistencia" name="searchAsistencia" required>
     <button onclick="buscarAlumnoAsistencia()">Buscar</button><br><br>
@@ -192,16 +187,17 @@
                 <th>Nombre Completo</th> 
                 <th>Asistencia</th>
             </tr>
-            <!-- Div para mostrar los mensajes al usuario -->
-            <div id="mensajeUsuario" class="mensaje-usuario" style="display: none;"></div>
         </thead>
         <tbody id="asistenciasBody">
             <!-- Las filas de asistencia se agregarán aquí dinámicamente -->
         </tbody>
     </table>
-    <br><button onclick="guardarAsistencias()">Guardar Asistencias</button>
+ 
     <br><br>
+    <!-- Contenedor para mostrar mensajes -->
+<div id="mensajeUsuario" class="mensaje-usuario" style="display: none;"></div>
 </div>
+
 
 
 <!-- Panel para Notas -->
@@ -236,15 +232,14 @@
         <tbody id="notasBody">
             <!-- Las filas de notas se agregarán aquí dinámicamente -->
         </tbody>
+
+  
+
     </table>
-    
+     
     <!-- Mensajes de error o éxito (Contenedor de Mensajes) -->
     <br><div id="mensajeContainer" class="mensaje" style="display:none;"></div>
-    
-    <!-- Botón de Guardado -->
-    <br><button onclick="guardarNotas()">Guardar Notas</button>
 </div>
-
 
 <img src="../resources/css/mesas.jpeg" alt="" style="width:100%; height:auto; margin-bottom:600px;">
 

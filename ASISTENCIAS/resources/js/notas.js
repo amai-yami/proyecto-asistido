@@ -1,3 +1,4 @@
+// Función para guardar las notas
 function guardarNotas() {
     const rows = document.querySelectorAll('#notasBody tr');
     const notas = {};
@@ -14,9 +15,15 @@ function guardarNotas() {
         const parcial2 = inputs[1].value;
         const final = inputs[2].value;
 
-        // Validar que las notas sean números válidos
+        // Validar que las notas sean números válidos y estén en el rango de 0 a 10
         if (parcial1 === '' || parcial2 === '' || final === '' || isNaN(parcial1) || isNaN(parcial2) || isNaN(final)) {
             mostrarMensaje(`Error: Las notas del alumno con ID ${idAlumno} no son válidas. Por favor, ingresa números correctos.`, 'error');
+            return;
+        }
+        
+        // Validar que las notas estén dentro del rango de 0 a 10
+        if (parcial1 < 0 || parcial1 > 10 || parcial2 < 0 || parcial2 > 10 || final < 0 || final > 10) {
+            mostrarMensaje(`Error: Las notas del alumno con ID ${idAlumno} deben estar entre 0 y 10.`, 'error');
             return;
         }
 
@@ -60,10 +67,6 @@ function guardarNotas() {
     });
 }
 
-
-
-
-
 // Función para cargar los alumnos en la tabla
 function cargarAlumnosNotas() {
     fetch('../bd/listar_alumnos.php')
@@ -84,12 +87,25 @@ function cargarAlumnosNotas() {
                     const rowNotas = document.createElement('tr');
                     rowNotas.innerHTML = `
                         <td>${alumno.nombre} ${alumno.apellido}</td>
-                        <td><input type="number" name="parcial1_${alumno.id}" min="1" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
-                        <td><input type="number" name="parcial2_${alumno.id}" min="1" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
-                        <td><input type="number" name="final_${alumno.id}" min="1" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
+                        <td><input type="number" name="parcial1_${alumno.id}" min="0" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
+                        <td><input type="number" name="parcial2_${alumno.id}" min="0" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
+                        <td><input type="number" name="final_${alumno.id}" min="0" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
                     `;
+                    // Añadir la fila a la tabla
                     notasBody.appendChild(rowNotas);
                 });
+
+                // Verificar si el botón ya existe, para evitar duplicados
+                let buttonGuardar = document.getElementById('guardarNotasButton');
+                if (!buttonGuardar) {
+                    buttonGuardar = document.createElement('button');
+                    buttonGuardar.id = 'guardarNotasButton';
+                    buttonGuardar.textContent = 'Guardar Notas';
+                    buttonGuardar.addEventListener('click', guardarNotas);
+
+                    // Añadir el botón al final de la tabla
+                    notasBody.appendChild(buttonGuardar);
+                }
             } else {
                 // Si no hay alumnos, mostrar un mensaje de error
                 mostrarMensaje('No se encontraron alumnos disponibles.', 'error');
@@ -100,10 +116,6 @@ function cargarAlumnosNotas() {
             mostrarMensaje('Error al cargar los alumnos: ' + error.message, 'error');
         });
 }
-
-
-
-
 
 // Función para buscar un alumno
 function buscarAlumnoNotas() {
@@ -125,9 +137,9 @@ function buscarAlumnoNotas() {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${alumno.nombre} ${alumno.apellido}</td>
-                        <td><input type="number" name="parcial1_${alumno.id}" min="1" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
-                        <td><input type="number" name="parcial2_${alumno.id}" min="1" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
-                        <td><input type="number" name="final_${alumno.id}" min="1" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
+                        <td><input type="number" name="parcial1_${alumno.id}" min="0" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
+                        <td><input type="number" name="parcial2_${alumno.id}" min="0" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
+                        <td><input type="number" name="final_${alumno.id}" min="0" max="10" style="width: 70px; height: 30px; margin: 2px; text-align: center;"></td>
                     `;
                     notasBody.appendChild(row);
                 });
@@ -171,14 +183,12 @@ function verNotas() {
         });
 }
 
-
 // Función para mostrar mensajes de error o éxito
 function mostrarMensaje(mensaje, tipo) {
     // Obtén el contenedor del mensaje dentro del panel de notas
     const mensajeContainer = document.getElementById('mensajeContainer');
     
     mensajeContainer.textContent = mensaje;
-
     // Aplicar estilo según el tipo de mensaje
     if (tipo === 'error') {
         mensajeContainer.style.backgroundColor = 'red';
@@ -187,18 +197,10 @@ function mostrarMensaje(mensaje, tipo) {
         mensajeContainer.style.backgroundColor = 'green';
         mensajeContainer.style.color = 'white';
     }
-
     // Mostrar el mensaje
     mensajeContainer.style.display = 'block';
-
     // Ocultar el mensaje después de un tiempo
     setTimeout(() => {
         mensajeContainer.style.display = 'none';
     }, 5000);
 }
-
-
-
-
-
-

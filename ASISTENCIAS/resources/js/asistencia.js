@@ -1,208 +1,9 @@
-function buscarAlumnoAsistencia() {
-    const searchValue = document.getElementById('searchAsistencia').value;
-
-    if (!searchValue.trim()) {
-        alert('Por favor ingresa un nombre, apellido, DNI o matrícula para buscar.');
-        return;
-    }
-
-    fetch(`../bd/buscar_alumno.php?search=${searchValue}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta de la red: ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const asistenciasBody = document.getElementById('asistenciasBody');
-            asistenciasBody.innerHTML = ''; // Limpiar el contenido previo
-
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(alumno => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${alumno.matricula} - ${alumno.dni} - ${alumno.nombre} ${alumno.apellido}</td>
-                        <td><input type="checkbox" name="asistencia_${alumno.id}" value="presente"> Presente</td>
-                    `;
-                    asistenciasBody.appendChild(row);
-                });
-            } else {
-                asistenciasBody.innerHTML = `<tr><td colspan="2">No se encontraron alumnos.</td></tr>`;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            const asistenciasBody = document.getElementById('asistenciasBody');
-            asistenciasBody.innerHTML = `<tr><td colspan="2">Error al buscar alumno: ${error.message}</td></tr>`;
-        });
-}
-
-
-
-
-
-
-function cargarAlumnos() {
-    fetch('../bd/listar_alumnos.php') // Ajusta la ruta según tu estructura de carpetas
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta de la red');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const asistenciasBody = document.getElementById('asistenciasBody');
-            asistenciasBody.innerHTML = ''; // Limpiar filas existentes
-
-            if (data.error) {
-                // Manejo de error
-                asistenciasBody.innerHTML = `<tr><td colspan="2">${data.error}</td></tr>`;
-                return;
-            }
-
-            data.forEach(alumno => {
-                const rowAsistencias = document.createElement('tr');
-                rowAsistencias.innerHTML = `
-                    <td>${alumno.nombre} ${alumno.apellido}</td>
-                    <td><input type="checkbox" name="asistencia_${alumno.id}" value="presente"> Presente</td>
-                `;
-                asistenciasBody.appendChild(rowAsistencias);
-            });
-        })
-        .catch(error => {
-            console.error('Error al cargar alumnos:', error);
-            const asistenciasBody = document.getElementById('asistenciasBody');
-            asistenciasBody.innerHTML = `<tr><td colspan="2">Error al cargar alumnos: ${error.message}</td></tr>`;
-        });
-}
-
-
-function guardarAsistencias() {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-    const asistencias = [];
-    let fecha = document.getElementById('fecha').value; // Obtener el valor del input de fecha
-
-    // Verificar si se ha seleccionado una fecha
-    if (!fecha) {
-        alert('Por favor, selecciona una fecha.');
-        return;
-    }
-
-    // Asegurarse de que la fecha incluya los segundos
-    if (fecha.length === 16) { // Si la fecha tiene formato "YYYY-MM-DDTHH:MM" (sin segundos)
-        fecha += ":00"; // Agregar los segundos como "00"
-    }
-
-    // Asegurarse de que la fecha esté en el formato adecuado (YYYY-MM-DD HH:MM:SS)
-    // Si la fecha contiene el carácter 'T' (lo que implica un formato de tipo ISO)
-    // Reemplazamos 'T' por un espacio para cumplir con el formato 'YYYY-MM-DD HH:MM'
-    if (fecha.includes('T')) {
-        fecha = fecha.replace('T', ' '); // Reemplazamos 'T' por un espacio
-    }
-
-    // Verificar si se han seleccionado alumnos
-    if (checkboxes.length === 0) {
-        alert('No se seleccionaron alumnos.');
-        return;
-    }
-
-    // Recopilar los datos de los alumnos seleccionados
-    checkboxes.forEach(checkbox => {
-        const alumnoId = checkbox.name.split('_')[1]; // Obtener el ID del alumno del nombre del checkbox
-        asistencias.push({
-            alumnoId: alumnoId,
-            asistencia: checkbox.value === 'presente', // Marcar como 'presente' si el valor del checkbox es 'presente'
-            fecha: fecha // Incluir la fecha seleccionada con segundos
-        });
-    });
-
-    // Enviar las asistencias al servidor
-    fetch('../bd/guardar_asistencias.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json' // Asegurar que el cuerpo se envíe como JSON
-        },
-        body: JSON.stringify(asistencias) // Convertir el array a JSON
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(text => {
-        try {
-            const data = JSON.parse(text); // Intentar parsear la respuesta como JSON
-            if (data.success) {
-                alert('Asistencias registradas con éxito.');
-
-                // Verificar si hay cumpleaños
-                if (data.cumpleanios && data.cumpleanios.length > 0) {
-                    // Crear un mensaje con la lista de cumpleaños
-                    const cumpleaniosMensaje = '¡Hoy es el cumpleaños de: ' + data.cumpleanios.join(', ') + '!';
-                    alert(cumpleaniosMensaje); // Mostrar el mensaje de cumpleaños
-                }
-            } else {
-                alert('Hubo un error al registrar las asistencias: ' + (data.message || 'Desconocido'));
-            }
-        } catch (error) {
-            console.error('Error al procesar la respuesta del servidor:', error);
-            alert('Error al procesar la respuesta del servidor. Verifica los detalles en la consola para más información.');
-        }
-    })
-    .catch(error => {
-        console.error('Error al guardar asistencias:', error);
-        alert('Error al guardar las asistencias. Verifica los detalles en la consola para más información.');
-    });
-}
-
-
-
-
-
-function verAsistencias() {
-    fetch('../bd/ver_asistencias.php')
-        .then(response => {
-            // Verifica que la respuesta sea exitosa (status 200)
-            if (!response.ok) {
-                throw new Error(`Error en la solicitud: ${response.statusText}`);
-            }
-            // Verifica que la respuesta sea JSON
-            return response.json().catch(err => {
-                throw new Error('La respuesta no es un JSON válido');
-            });
-        })
-        .then(data => {
-            console.log(data);  // Muestra los datos para depuración
-
-            // Verifica si hay un error en los datos
-            if (data.error) {
-                console.error(data.error);
-                return;
-            }
-
-            const asistenciasBody = document.getElementById("asistenciasBody");
-            asistenciasBody.innerHTML = "";  // Limpiar la tabla antes de agregar los nuevos datos
-
-            // Mostrar todas las asistencias en la tabla
-            data.forEach(asistencia => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `<td>${asistencia.nombre_completo}</td>
-                                <td>Asistió a ${asistencia.numero_asistencias} clases</td>`;
-                asistenciasBody.appendChild(tr);
-            });
-        })
-        .catch(error => {
-            console.error('Error al cargar las asistencias:', error.message);
-        });
-}
-
 function modificarAsistenciasFormulario() {
     fetch('../bd/listar_alumnos.php')  
         .then(response => response.json())
         .then(data => {
             const asistenciasBody = document.getElementById('asistenciasBody');
-            asistenciasBody.innerHTML = '';  // Limpiar la tabla antes de agregar los nuevos alumnos
+            asistenciasBody.innerHTML = '';
 
             if (data.error) {
                 mostrarMensaje('No se encontraron alumnos.', 'error');
@@ -243,58 +44,220 @@ function modificarAsistencia() {
     const asistencias = [];
 
     inputs.forEach(input => {
-        const alumnoId = input.name.split('_')[1];  // Extrae el ID del alumno
-        let valorAsistencia = input.value.trim();  // Obtiene el valor tal cual lo escribió el usuario
+        const alumnoId = input.name.split('_')[1];
+        let valorAsistencia = input.value.trim();
 
-        // Si el valor está vacío, no lo enviamos
         if (valorAsistencia === "") {
-            return;  // No agregar este campo si está vacío
+            return;
         }
 
-        // Convertir el valor a número flotante para asegurarnos de que es un número
-        valorAsistencia = parseFloat(valorAsistencia);  
+        valorAsistencia = parseFloat(valorAsistencia);
 
-        // Si el valor no es un número válido (NaN), lo descartamos
         if (isNaN(valorAsistencia)) {
-            return; // No agregar si no es un número válido
+            return;
         }
 
-        // Agregar la asistencia al array con el valor exacto
         asistencias.push({ alumnoId, valorAsistencia });
     });
 
-    // Si no se han registrado asistencias válidas, mostrar mensaje
     if (asistencias.length === 0) {
         mostrarMensaje('No se han registrado asistencias válidas.', 'error');
-        alert('No se han registrado asistencias válidas.');
         return;
     }
 
-    // Verificar los datos antes de enviarlos al servidor (para depuración)
     console.log("Asistencias enviadas al servidor:", asistencias);
 
-    // Enviar todos los valores tal cual los escribió el usuario al servidor
     fetch('../bd/modificar_asistencia.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ asistencias })  // Enviamos el array con todos los valores tal cual
+        body: JSON.stringify({ asistencias })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             mostrarMensaje('Asistencias guardadas con éxito', 'success');
-            alert('Asistencias guardadas con éxito.');
         } else {
             mostrarMensaje('Error al guardar las asistencias: ' + (data.message || 'Desconocido'), 'error');
-            alert('Error al guardar las asistencias: ' + (data.message || 'Desconocido'));
         }
     })
     .catch(error => {
-        console.error('Error al guardar las asistencias:', error);
-        mostrarMensaje('Error al guardar las asistencias.', 'error');
-        alert('Error al guardar las asistencias.');
+        console.error('Error al modificar las asistencias:', error);
+        mostrarMensaje('Error al modificar las asistencias: ' + error.message, 'error');
     });
 }
 
+
+
+
+
+
+
+// Buscar alumnos para asistencia
+function buscarAlumnoAsistencia() {
+    const searchValue = document.getElementById('searchAsistencia').value.trim();
+
+    if (!searchValue) {
+        mostrarMensaje('Por favor ingresa un nombre, apellido, DNI o matrícula para buscar.', 'error');
+        return;
+    }
+
+    fetch(`../bd/buscar_alumno.php?search=${searchValue}`)
+        .then(response => response.ok ? response.json() : Promise.reject(`Error ${response.status}`))
+        .then(data => {
+            const asistenciasBody = document.getElementById('asistenciasBody');
+            asistenciasBody.innerHTML = ''; // Limpiar contenido previo
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(alumno => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${alumno.matricula} - ${alumno.dni} - ${alumno.nombre} ${alumno.apellido}</td>
+                        <td><input type="checkbox" name="asistencia_${alumno.id}" value="presente"> Presente</td>
+                    `;
+                    asistenciasBody.appendChild(row);
+                });
+            } else {
+                asistenciasBody.innerHTML = '<tr><td colspan="2">No se encontraron alumnos.</td></tr>';
+                mostrarMensaje('No se encontraron alumnos.', 'error');
+            }
+        })
+        .catch(error => mostrarError(asistenciasBody, `Error al buscar alumno: ${error}`));
+}
+// Cargar alumnos para listado general
+function cargarAlumnos() {
+    fetch('../bd/listar_alumnos.php')
+        .then(response => response.ok ? response.json() : Promise.reject(`Error ${response.status}`))
+        .then(data => {
+            const asistenciasBody = document.getElementById('asistenciasBody');
+            asistenciasBody.innerHTML = ''; // Limpiar filas existentes
+
+            // Agregar input de fecha antes del listado
+            const fechaRow = document.createElement('tr');
+            fechaRow.innerHTML = `
+                <td colspan="2">
+                    <label for="fecha">Fecha:</label>
+                    <input type="datetime-local" id="fecha" name="fecha" required>
+                </td>
+            `;
+            asistenciasBody.appendChild(fechaRow);
+
+            if (data.error) {
+                asistenciasBody.innerHTML += `<tr><td colspan="2">${data.error}</td></tr>`;
+                mostrarMensaje(data.error, 'error');
+                return;
+            }
+
+            // Generar filas para los alumnos
+            data.forEach(alumno => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${alumno.nombre} ${alumno.apellido}</td>
+                    <td><input type="checkbox" name="asistencia_${alumno.id}" value="presente"> Presente</td>
+                `;
+                asistenciasBody.appendChild(row);
+            });
+
+            // Agregar botón para guardar asistencias después del listado
+            const controlsRow = document.createElement('tr');
+            controlsRow.innerHTML = `
+                <td colspan="2">
+                    <button onclick="guardarAsistencias()">Guardar Asistencias</button>
+                </td>
+            `;
+            asistenciasBody.appendChild(controlsRow);
+        })
+        .catch(error => mostrarError(asistenciasBody, `Error al cargar alumnos: ${error}`));
+}
+
+
+
+// Guardar asistencias seleccionadas
+function guardarAsistencias() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    const asistencias = [];
+    let fecha = document.getElementById('fecha').value;
+
+    if (!fecha) {
+        mostrarMensaje('Por favor, selecciona una fecha.', 'error');
+        return;
+    }
+
+    fecha = ajustarFechaFormato(fecha);
+
+    if (checkboxes.length === 0) {
+        mostrarMensaje('No se seleccionaron alumnos.', 'error');
+        return;
+    }
+
+    checkboxes.forEach(checkbox => {
+        const alumnoId = checkbox.name.split('_')[1];
+        asistencias.push({ alumnoId, asistencia: checkbox.value === 'presente', fecha });
+    });
+
+    fetch('../bd/guardar_asistencias.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(asistencias)
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(`Error HTTP ${response.status}`))
+    .then(data => {
+        if (data.success) {
+            mostrarMensaje('Asistencias registradas con éxito.', 'success');
+            if (data.cumpleanios?.length) {
+                mostrarMensaje(`¡Hoy es el cumpleaños de: ${data.cumpleanios.join(', ')}!`, 'info');
+            }
+        } else {
+            mostrarMensaje(`Error al registrar asistencias: ${data.message || 'Desconocido'}`, 'error');
+        }
+    })
+    .catch(error => mostrarMensaje(`Error al guardar asistencias: ${error}`, 'error'));
+}
+
+// Ver asistencias registradas
+function verAsistencias() {
+    fetch('../bd/ver_asistencias.php')
+        .then(response => response.ok ? response.json() : Promise.reject(`Error ${response.status}`))
+        .then(data => {
+            if (data.error) {
+                mostrarMensaje(data.error, 'error');
+                return;
+            }
+
+            const asistenciasBody = document.getElementById('asistenciasBody');
+            asistenciasBody.innerHTML = '';
+
+            data.forEach(asistencia => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${asistencia.nombre_completo}</td>
+                    <td>Asistió a ${asistencia.numero_asistencias} clases</td>
+                `;
+                asistenciasBody.appendChild(row);
+            });
+        })
+        .catch(error => mostrarMensaje(`Error al cargar las asistencias: ${error}`, 'error'));
+}
+
+// Función auxiliar para ajustar formato de fecha
+function ajustarFechaFormato(fecha) {
+    if (fecha.includes('T')) {
+        fecha = fecha.replace('T', ' ');
+    }
+    return fecha.length === 16 ? fecha + ':00' : fecha;
+}
+
+// Mostrar mensajes al usuario
+function mostrarMensaje(mensaje, tipo) {
+    const mensajeContainer = document.getElementById('mensajeUsuario');
+    mensajeContainer.style.display = 'block';
+    mensajeContainer.innerHTML = `<div class="${tipo}">${mensaje}</div>`;
+    setTimeout(() => mensajeContainer.style.display = 'none', 5000);
+}
+
+// Mostrar errores en el DOM
+function mostrarError(container, mensaje) {
+    container.innerHTML = `<tr><td colspan="2">${mensaje}</td></tr>`;
+    mostrarMensaje(mensaje, 'error');
+}

@@ -3,11 +3,11 @@ solo registra alumnos asistencias  notas  y usuarios
 
 muestra gran parte de la informacion guardada
  
-no muestra condicion  de final de cursada correctamente
+ muestra condicion  de final de cursada correctamente
 
 puede hacer todas las funciones de la seccion alumnos
 
-falta modificiar algunas cosas en las asistencias y en las notas
+falto modificiar algunas cosas en las asistencias y en las notas
 
 y algunos archivos en el directorio no hacen nada  como el de instituciones
 
@@ -39,15 +39,19 @@ y el cumpleaños
 
 -------------------------notas
 en notas se puede guardar editar en la misma seccion de los registros
- y ver las notas de todos los alumnos aunque no tengan con n/a
+ y ver las notas de todos los alumnos aunque no tengan ,con n/a
 
-no funciona el calculo de ver condicion   
+ funciona el calculo de ver condicion   
 
 Se puede ver 5 campos para 
-dias de clases  regular notas y asistencias /// y promocion notas y asistencias  
+dias de clases  ///  regular notas y asistencias /// y promocion notas y asistencias  
 
 y un boton verificar informacion   que envia la consulta al servidor en base a los parametros elejidos por el usuario del sistema y devuelve en texto la condicion de cada alumno con su nombre completo
 
+
+ademas no termine de corregir la forma de ingresar notas ya que si pone de a 1 las fechas ´por ej todos los parciales 1 o los parciales 2 o finales no los guarda correctamente
+
+Y visualemente no funciona
 
 ---------visual
 muchas funciones en todos los apartados le falta claridad visual

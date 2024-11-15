@@ -13,6 +13,16 @@ async function condicionalumnos() {
             return;
         }
 
+        // Validar que los valores sean razonables
+        if (diasClase < 0 || 
+            porcentajeAsistenciaPromocion < 0 || porcentajeAsistenciaPromocion > 100 ||
+            porcentajeNotaPromocion < 0 || porcentajeNotaPromocion > 10 ||
+            porcentajeAsistenciaRegular < 0 || porcentajeAsistenciaRegular > 100 ||
+            porcentajeNotaRegular < 0 || porcentajeNotaRegular > 10) {
+            mostrarError('Los valores deben estar en el rango adecuado (0-100).');
+            return;
+        }
+
         const datosFormulario = {
             diasClase: diasClase,
             promocion: {
@@ -25,6 +35,9 @@ async function condicionalumnos() {
             }
         };
 
+        const button = document.querySelector('button[type="button"]');
+        button.disabled = true; // Deshabilitar el botón mientras se procesa
+
         const response = await fetch('../bd/condiciones.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -32,13 +45,19 @@ async function condicionalumnos() {
         });
 
         // Comprobar si la respuesta del servidor es exitosa
-        if (!response.ok) throw new Error('Error en la respuesta del servidor');
+        if (!response.ok) {
+            const errorMessage = await response.text(); // Obtener mensaje de error
+            throw new Error(`Error en la respuesta del servidor: ${errorMessage}`);
+        }
 
         const condicion = await response.json();
         mostrarCondicion(condicion);
     } catch (error) {
         console.error('Error en la solicitud o el procesamiento:', error);
         mostrarError('Ocurrió un error al consultar las condiciones. Por favor, intente más tarde.');
+    } finally {
+        const button = document.querySelector('button[type="button"]');
+        button.disabled = false; // Volver a habilitar el botón
     }
 }
 
@@ -57,12 +76,9 @@ function mostrarCondicion(condicion) {
 }
 
 function mostrarError(mensaje) {
-    const mensajeContainer = document.getElementById('mensajeContainer');
-    mensajeContainer.innerHTML = `
-        <h3>Error:</h3>
-        <p style="color: red;">${mensaje}</p>
-    `;
-    mensajeContainer.style.display = 'block';
+    const notasBody = document.getElementById('notasBody');
+    const errorMessage = `<div style="color: red; font-weight: bold; margin-bottom: 20px;">${mensaje}</div>`;
+    notasBody.innerHTML = errorMessage + notasBody.innerHTML; // Mostrar el mensaje de error al inicio
 }
 
 function mostrarFormulario() {
